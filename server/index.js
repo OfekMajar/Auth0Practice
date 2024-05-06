@@ -8,11 +8,14 @@ const app = express();
 app.use(cors());
 const { config } = require("./config");
 const { audience, issuerBaseURL } = config;
+
+//& this is one way to do the jwt verification
 const jwtCheck = auth({
   audience: audience,
   issuerBaseURL: issuerBaseURL,
   tokenSigningAlg: "RS256",
 });
+//& this is another of the way to do the jwt verification
 
 const verifyJwt = jwt({
   secret: jwks.expressJwtSecret({
@@ -26,7 +29,10 @@ const verifyJwt = jwt({
   algorithms: ["RS256"],
 });
 
-app.use(verifyJwt);
+// app.use(verifyJwt); //! once i do this or put it in between the function and the route ("middleware") i get 401 unauthorized
+
+//& everything works when i don't use the verification but once i do i get this error : "InvalidTokenError: Invalid Compact JWS"
+
 app.get("/", (req, res) => {
   res.send("hello from index");
 });
